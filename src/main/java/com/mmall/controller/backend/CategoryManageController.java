@@ -7,7 +7,6 @@ import com.mmall.pojo.Category;
 import com.mmall.pojo.User;
 import com.mmall.service.ICategoryService;
 import com.mmall.service.IUserService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +33,7 @@ public class CategoryManageController {
      * @param categoryName 品类名称
      * @param parentId 品类的父id
      */
-    @RequestMapping(value="add_category.do",method = RequestMethod.POST)
+    @RequestMapping(value="/add_category.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> addCategory(HttpSession session, String categoryName,
                                               @RequestParam(value = "parentId",defaultValue = "0") int parentId){
@@ -57,7 +56,7 @@ public class CategoryManageController {
      * @param categoryName 品类名称
      * @param categoryId 品列id
      */
-    @RequestMapping(value="set_category_name.do",method = RequestMethod.POST)
+    @RequestMapping(value="/set_category_name.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> setCategoryName(HttpSession session,String categoryName,int categoryId){
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -75,13 +74,13 @@ public class CategoryManageController {
     /**
      * 通过categoryId获取子类（一级/平级）
      */
-    @RequestMapping(value="get_category.do",method = RequestMethod.POST)
+    @RequestMapping(value="/get_category.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<List<Category>> getChildrenByParentId(HttpSession session,
                                                                 @RequestParam(value="categoryId",defaultValue = "0") Integer categoryId){
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null){
-            ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录，请登录");
+            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录，请登录");
         }
         // 判断登录用户是否是管理员
         if(iUserService.checkAdminRole(user).isSuccess()){
@@ -94,7 +93,7 @@ public class CategoryManageController {
     /**
      * 通过category获取所有子类（多级）
      */
-    @RequestMapping(value="get_deep_category.do",method = RequestMethod.POST)
+    @RequestMapping(value="/get_deep_category.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse getDeepChildrenByParentId(HttpSession session,
                                                     @RequestParam(value="categoryId",defaultValue = "0") Integer categoryId){
