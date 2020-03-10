@@ -22,6 +22,9 @@ public interface ProductMapper {
     List<Product> selectList();
 
     // 根据name和id搜索产品
-    List<Product> selectByNameAndId(@Param(value="productName") String productName,
-                                    @Param(value="productId") Integer productId);
+    List<Product> selectByNameAndId(@Param(value = "productName") String productName,
+                                    @Param(value = "productId") Integer productId);
+
+    List<Product> selectByNameAndCategoryIds(@Param(value = "keyword") String keyword,
+                                             @Param(value = "categoryIdList") List<Integer> categoryIdList);
 }
