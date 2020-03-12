@@ -7,11 +7,11 @@ public class Cart {
 
     private Integer userId;
 
-    private Integer productId;
+    private Integer productId; // 产品id
 
-    private Integer quantity;
+    private Integer quantity; // 数量
 
-    private Integer checked;
+    private Integer checked; // 是否选中
 
     private Date createTime;
 
