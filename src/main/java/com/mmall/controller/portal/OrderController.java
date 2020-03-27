@@ -3,6 +3,7 @@ package com.mmall.controller.portal;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.demo.trade.config.Configs;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +39,93 @@ public class OrderController {
 
     @Autowired
     private IOrderService iOrderService;
+
+    /**
+     * 创建订单
+     * @param session
+     * @param shippingId 收货地址ID
+     * @return
+     */
+    @RequestMapping(value = "/create.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse create(HttpSession session,Integer shippingId){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null){
+            ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iOrderService.createOrder(user.getId(),shippingId);
+    }
+
+    /**
+     * 取消订单
+     * @param session
+     * @param orderNo 订单编号
+     * @return
+     */
+    @RequestMapping(value = "/cancel.do")
+    @ResponseBody
+    public ServerResponse<String> cancel(HttpSession session,Long orderNo){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null){
+            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iOrderService.cancelOrder(user.getId(),orderNo);
+    }
+
+    /**
+     * 获取该用户下购物车里选中产品的详情
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/get_order_cart_product.do")
+    @ResponseBody
+    public ServerResponse getOrderCartProduct(HttpSession session){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null){
+            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iOrderService.getOrderCartProduct(user.getId());
+    }
+
+    /**
+     * 获取订单详情
+     * @param session
+     * @param orderNo 订单编号
+     * @return
+     */
+    @RequestMapping(value = "/detail.do")
+    @ResponseBody
+    public ServerResponse detail(HttpSession session,Long orderNo){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null){
+            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iOrderService.detailOrder(user.getId(),orderNo);
+    }
+
+    /**
+     * 获取订单列表（分页）
+     * @param session
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/list.do")
+    @ResponseBody
+    public ServerResponse<PageInfo> list(HttpSession session,
+                                         @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
+                                         @RequestParam(value = "pageSize",defaultValue = "10") int pageSize){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null){
+            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iOrderService.listOrder(user.getId(),pageNum,pageSize);
+    }
 
     /**
      * 支付接口
