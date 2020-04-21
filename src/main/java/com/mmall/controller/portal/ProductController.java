@@ -38,7 +38,7 @@ public class ProductController {
      * 获取产品列表（搜索）
      * @param keyword 搜索关键字 （required=false非必传）
      * @param categoryId 产品类型（required=false非必传）
-     * @param pageNumber 第几页（默认值：1）
+     * @param pageNum 第几页（默认值：1）
      * @param pageSize 页大小（默认值：10）
      * @param orderBy 排序（默认值：空字符串）
      */
@@ -46,9 +46,9 @@ public class ProductController {
     @ResponseBody
     public ServerResponse<PageInfo> getProductList(@RequestParam(value = "keyword",required = false) String keyword,
                                                    @RequestParam(value = "categoryId",required = false) Integer categoryId,
-                                                   @RequestParam(value = "pageNumber",defaultValue = "1") int pageNumber,
+                                                   @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
                                                    @RequestParam(value = "pageSize",defaultValue = "10") int pageSize,
                                                    @RequestParam(value = "orderBy",defaultValue = "") String orderBy){
-        return iProductService.getListByKeywordCategory(keyword, categoryId, pageNumber, pageSize, orderBy);
+        return iProductService.getListByKeywordCategory(keyword, categoryId, pageNum, pageSize, orderBy);
     }
 }
