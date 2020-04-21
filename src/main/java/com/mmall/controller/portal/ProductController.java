@@ -42,7 +42,7 @@ public class ProductController {
      * @param pageSize 页大小（默认值：10）
      * @param orderBy 排序（默认值：空字符串）
      */
-    @RequestMapping(value = "list.do",method = RequestMethod.POST)
+    @RequestMapping(value = "list.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<PageInfo> getProductList(@RequestParam(value = "keyword",required = false) String keyword,
                                                    @RequestParam(value = "categoryId",required = false) Integer categoryId,
