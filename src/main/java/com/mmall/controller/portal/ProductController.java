@@ -46,7 +46,7 @@ public class ProductController {
     @ResponseBody
     public ServerResponse<PageInfo> getProductList(@RequestParam(value = "keyword",required = false) String keyword,
                                                    @RequestParam(value = "categoryId",required = false) Integer categoryId,
-                                                   @RequestParam(value = "pageSize",defaultValue = "1") int pageNum,
+                                                   @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
                                                    @RequestParam(value = "pageSize",defaultValue = "10") int pageSize,
                                                    @RequestParam(value = "orderBy",defaultValue = "") String orderBy){
         return iProductService.getListByKeywordCategory(keyword, categoryId, pageNum, pageSize, orderBy);
