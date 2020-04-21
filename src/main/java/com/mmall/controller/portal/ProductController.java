@@ -49,6 +49,8 @@ public class ProductController {
                                                    @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
                                                    @RequestParam(value = "pageSize",defaultValue = "10") int pageSize,
                                                    @RequestParam(value = "orderBy",defaultValue = "") String orderBy){
+        System.out.println("====当前页==="+pageNum);
+        System.out.println("====页大小==="+pageSize);
         return iProductService.getListByKeywordCategory(keyword, categoryId, pageNum, pageSize, orderBy);
     }
 }
