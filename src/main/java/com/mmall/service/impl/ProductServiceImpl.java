@@ -116,7 +116,7 @@ public class ProductServiceImpl implements IProductService {
         // imageHost，从配置文件获取，配置和代码分离
         productDetailVo.setImageHost(PropertiesUtil.getProperty(
                 "ftp.server.http.prefix",
-                "http://img.happymmall.com/"));
+                "http://img.yaoerba.com/"));
         // 设置parentCategoryId
         Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
         if (category == null) {
@@ -180,7 +180,7 @@ public class ProductServiceImpl implements IProductService {
         productListVo.setPrice(product.getPrice());
         productListVo.setImageHost(PropertiesUtil.getProperty(
                 "ftp.server.http.prefix",
-                "http://img.happymmall.com/"));
+                "http://img.yaoerba.com/"));
         return productListVo;
     }
 
