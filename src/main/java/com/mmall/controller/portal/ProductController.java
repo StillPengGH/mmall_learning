@@ -28,7 +28,7 @@ public class ProductController {
      * 获取产品详情
      * @param productId 产品ID
      */
-    @RequestMapping(value = "detail.do",method = RequestMethod.POST)
+    @RequestMapping(value = "detail.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<ProductDetailVo> getProductDetail(Integer productId){
         return iProductService.productDetail(productId);
