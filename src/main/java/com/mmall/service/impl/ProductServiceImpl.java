@@ -231,7 +231,7 @@ public class ProductServiceImpl implements IProductService {
         // 处理排序
         if(StringUtils.isNotBlank(orderBy)){
             if(Const.ProductListOrderBy.PRICE_ASC_DESC.contains(orderBy)){
-                String[] orderByArray = orderBy.split("-");
+                String[] orderByArray = orderBy.split("_");
                 // PageHelper规则："price desc" 格式
                 PageHelper.orderBy(orderByArray[0] + " " + orderByArray[1]);
             }
