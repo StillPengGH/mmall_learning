@@ -3,6 +3,7 @@ package com.mmall.service.impl;
 import com.google.common.collect.Lists;
 import com.mmall.service.IFileService;
 import com.mmall.util.FTPUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,8 @@ import java.util.UUID;
  * @date 2020/3/5 14:20
  */
 @Service("iFileService")
+@Slf4j
 public class FileServiceImpl implements IFileService {
-
-    // 用于打印日志
-    private Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
     /**
      * 上传图片
@@ -38,7 +37,7 @@ public class FileServiceImpl implements IFileService {
         // 创建上传后的文件名（不重复）
         String uploadFileName = UUID.randomUUID().toString() + "." + fileExtName;
         // 打印上传文件日志，其中{}为占位符和后面的参数意义对应(logback规定)
-        logger.info("开始上传文件，上传的文件名：{},上传的路径：{},新文件名：{}",
+        log.info("开始上传文件，上传的文件名：{},上传的路径：{},新文件名：{}",
                 fileName,path,uploadFileName);
         // 声明上传路径的file
         File fileDir = new File(path);
@@ -59,7 +58,7 @@ public class FileServiceImpl implements IFileService {
             // 上传到FTP服务器，删除本地upload下的文件
             targetFile.delete();
         } catch (IOException e) {
-            logger.error("文件上传异常",e);
+            log.error("文件上传异常",e);
             return null;
         }
         // 返回上传文件的文件名

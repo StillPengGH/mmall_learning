@@ -3,6 +3,7 @@ package com.mmall.common;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,9 +12,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * Token缓存类
  */
+@Slf4j
 public class TokenCache {
-    // 创建日志
-    private static Logger logger = LoggerFactory.getLogger(TokenCache.class);
+
     // 缓存中key的前缀
     public static final String TOKEN_PREFIX = "token_";
 
@@ -46,7 +47,7 @@ public class TokenCache {
             return value;
         }catch (Exception e){
             // 记录错误日志
-            logger.error("localCache get error",e);
+            log.error("localCache get error",e);
         }
         return null;
     }

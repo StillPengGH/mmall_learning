@@ -6,7 +6,7 @@
     <title>welcome</title>
 </head>
 <body>
-<h2>欢迎来到耀尔霸集团</h2>
+<h2>Welcome Tomcat 1</h2>
 <%--<form action="/manage/product/upload.do" name="form1" method="post" enctype="multipart/form-data">--%>
 <%--    <input type="file" name="upload_file"/>--%>
 <%--    <input type="submit" value="点击上传"/>--%>
