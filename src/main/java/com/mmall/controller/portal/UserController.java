@@ -37,14 +37,8 @@ public class UserController {
         ServerResponse<User> response = iUserService.login(username, password);
         // 登录成功
         if (response.isSuccess()) {
-
             // 在cookie中记录登录token（登录时的JSESSIONID）
             CookieUtil.writeLoginToken(httpServletResponse,session.getId());
-            // 读取cookie中的登录token（登录时的JSESSIONID）
-            String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-            // 删除cookie中的登录token
-            CookieUtil.delLoginToken(httpServletRequest,httpServletResponse);
-
             // 将登录信息保存到Redis中
             RedisPoolUtil.setEx(session.getId(), // sessionID
                     JsonUtil.obj2String(response.getData()), // 对User进行序列化
