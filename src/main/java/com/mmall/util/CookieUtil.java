@@ -32,6 +32,7 @@ public class CookieUtil {
         cookie.setDomain(COOKIE_DOMAIN);
         //设置指定目录才能获取到cookie，这里我们设置在根目录
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
         //设置cookie有效期为1年
         //设置为-1，则代表永久
         //不设置，cookie不会写入硬盘，而是写在内存，只在当前页面有效
