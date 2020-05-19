@@ -10,7 +10,11 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IOrderService;
+import com.mmall.util.CookieUtil;
+import com.mmall.util.JsonUtil;
+import com.mmall.util.RedisPoolUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,14 +46,20 @@ public class OrderController {
 
     /**
      * 创建订单
-     * @param session
+     * @param httpServletRequest
      * @param shippingId 收货地址ID
      * @return
      */
     @RequestMapping(value = "/create.do",method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse create(HttpSession session,Integer shippingId){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse create(HttpServletRequest httpServletRequest,Integer shippingId){
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if(StringUtils.isEmpty(userLoginToken)){
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr,User.class);
         if(user == null){
             ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
                     ResponseCode.NEED_LOGIN.getDesc());
@@ -59,14 +69,21 @@ public class OrderController {
 
     /**
      * 取消订单
-     * @param session
+     * @param httpServletRequest
      * @param orderNo 订单编号
      * @return
      */
     @RequestMapping(value = "/cancel.do")
     @ResponseBody
-    public ServerResponse<String> cancel(HttpSession session,Long orderNo){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<String> cancel(HttpServletRequest httpServletRequest,Long orderNo){
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if(user == null){
             return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
                     ResponseCode.NEED_LOGIN.getDesc());
@@ -76,13 +93,20 @@ public class OrderController {
 
     /**
      * 获取该用户下购物车里选中产品的详情
-     * @param session
+     * @param httpServletRequest
      * @return
      */
     @RequestMapping(value = "/get_order_cart_product.do")
     @ResponseBody
-    public ServerResponse getOrderCartProduct(HttpSession session){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse getOrderCartProduct(HttpServletRequest httpServletRequest){
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if(user == null){
             return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
                     ResponseCode.NEED_LOGIN.getDesc());
@@ -92,14 +116,21 @@ public class OrderController {
 
     /**
      * 获取订单详情
-     * @param session
+     * @param httpServletRequest
      * @param orderNo 订单编号
      * @return
      */
     @RequestMapping(value = "/detail.do")
     @ResponseBody
-    public ServerResponse detail(HttpSession session,Long orderNo){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse detail(HttpServletRequest httpServletRequest,Long orderNo){
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if(user == null){
             return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
                     ResponseCode.NEED_LOGIN.getDesc());
@@ -109,17 +140,24 @@ public class OrderController {
 
     /**
      * 获取订单列表（分页）
-     * @param session
+     * @param httpServletRequest
      * @param pageNum
      * @param pageSize
      * @return
      */
     @RequestMapping(value = "/list.do")
     @ResponseBody
-    public ServerResponse<PageInfo> list(HttpSession session,
+    public ServerResponse<PageInfo> list(HttpServletRequest httpServletRequest,
                                          @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
                                          @RequestParam(value = "pageSize",defaultValue = "10") int pageSize){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if(user == null){
             return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
                     ResponseCode.NEED_LOGIN.getDesc());
@@ -130,7 +168,7 @@ public class OrderController {
     /**
      * 支付接口
      *
-     * @param session
+     * @param httpServletRequest
      * @param orderNo 订单编号
      * @param request 通过request获得servlet上下文，
      *                获取upload文件夹路径，将返回的二维码，保存到本地
@@ -138,9 +176,15 @@ public class OrderController {
      */
     @RequestMapping(value = "/pay.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse pay(HttpSession session, Long orderNo, HttpServletRequest request) {
-        // 判断用户登录状态
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse pay(HttpServletRequest httpServletRequest, Long orderNo, HttpServletRequest request) {
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
                     ResponseCode.NEED_LOGIN.getDesc());
@@ -203,14 +247,21 @@ public class OrderController {
 
     /**
      * 查询订单状态
-     * @param session
+     * @param httpServletRequest
      * @param orderNo 订单号
      * @return true/false true为已支付状态
      */
     @RequestMapping(value = "/query_order_pay_status")
     @ResponseBody
-    public ServerResponse<Boolean> queryOrderPayStatus(HttpSession session,Long orderNo){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<Boolean> queryOrderPayStatus(HttpServletRequest httpServletRequest,Long orderNo){
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if(user == null){
             return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),
                     ResponseCode.NEED_LOGIN.getDesc());

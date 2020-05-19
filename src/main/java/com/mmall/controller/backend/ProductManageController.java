@@ -9,7 +9,10 @@ import com.mmall.pojo.User;
 import com.mmall.service.IFileService;
 import com.mmall.service.IProductService;
 import com.mmall.service.IUserService;
+import com.mmall.util.CookieUtil;
+import com.mmall.util.JsonUtil;
 import com.mmall.util.PropertiesUtil;
+import com.mmall.util.RedisPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,9 +42,15 @@ public class ProductManageController {
      */
     @RequestMapping(value = "/save.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse save(HttpSession session, Product product) {
+    public ServerResponse save(HttpServletRequest httpServletRequest, Product product) {
         // 判断登录状态
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
                     ResponseCode.NEED_LOGIN.getCode(), "未登录，请登录");
@@ -60,8 +69,15 @@ public class ProductManageController {
      */
     @RequestMapping(value = "/set_sale_status.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse setSaleStatus(HttpSession session, Integer productId, Integer status) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse setSaleStatus(HttpServletRequest httpServletRequest, Integer productId, Integer status) {
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
                     ResponseCode.NEED_LOGIN.getCode(), "未登录，请登录");
@@ -80,8 +96,15 @@ public class ProductManageController {
      */
     @RequestMapping(value = "/detail.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse getDetail(HttpSession session, Integer productId) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse getDetail(HttpServletRequest httpServletRequest, Integer productId) {
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
                     ResponseCode.NEED_LOGIN.getCode(), "未登录，请登录");
@@ -98,17 +121,24 @@ public class ProductManageController {
     /**
      * 获取产品列表（分页）
      *
-     * @param session  HttpSession
+     * @param httpServletRequest
      * @param pageNum  第几页 默认1
      * @param pageSize 一页多少条 默认10
      * @return SeverResponse<PageInfo>
      */
     @RequestMapping(value = "/list.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse getList(HttpSession session,
+    public ServerResponse getList(HttpServletRequest httpServletRequest,
                                   @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
                     ResponseCode.NEED_LOGIN.getCode(), "未登录，请登录");
@@ -125,7 +155,7 @@ public class ProductManageController {
     /**
      * 产品搜索
      *
-     * @param session     HttpSession
+     * @param httpServletRequest
      * @param productName 产品名称
      * @param productId   产品ID
      * @param pageNum     第几页
@@ -134,10 +164,17 @@ public class ProductManageController {
      */
     @RequestMapping(value = "/search.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse getSearch(HttpSession session, String productName, Integer productId,
+    public ServerResponse getSearch(HttpServletRequest httpServletRequest, String productName, Integer productId,
                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
                     ResponseCode.NEED_LOGIN.getCode(), "未登录，请登录");
@@ -159,10 +196,17 @@ public class ProductManageController {
      */
     @RequestMapping(value = "/upload.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse upload(HttpSession session,
+    public ServerResponse upload(HttpServletRequest httpServletRequest,
                                  @RequestParam(value = "upload_file", required = false) MultipartFile file,
                                  HttpServletRequest request) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
                     ResponseCode.NEED_LOGIN.getCode(), "未登录，请登录");
@@ -186,18 +230,25 @@ public class ProductManageController {
     /**
      * 富文本中图片上传（Simditor为例）
      *
-     * @param session
      * @param file
      * @param request
      * @return Map
      */
     @RequestMapping(value = "/richtext_img_upload.do", method = RequestMethod.POST)
     @ResponseBody
-    public Map richTextImgUpload(HttpSession session,
-                                 @RequestParam(value = "upload_file", required = false) MultipartFile file,
+    public Map richTextImgUpload(@RequestParam(value = "upload_file", required = false) MultipartFile file,
                                  HttpServletRequest request, HttpServletResponse response) {
         Map resMap = Maps.newHashMap();
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        // 判断登录状态
+        // 从Cookie获取loginToken,通过loginToken获取redis中用户信息字符串，并反序列化为User对象
+        String userLoginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isEmpty(userLoginToken)) {
+            resMap.put("success", false);
+            resMap.put("msg", "请登录管理员");
+            return resMap;
+        }
+        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             resMap.put("success", false);
             resMap.put("msg", "请登录管理员");

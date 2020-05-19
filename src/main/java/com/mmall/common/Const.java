@@ -13,6 +13,8 @@ public class Const {
     // 用于注册时，校验用户名和邮箱的常量，判断type是否为用户名或邮箱
     public static final String USERNAME = "username";
     public static final String EMAIL = "email";
+    // 忘记密码修改密码用到的token前缀
+    public static final String TOKEN_PREFIX = "token_";
 
     // Redis Session的过期时间
     public interface RedisCacheExTime {
