@@ -6,14 +6,13 @@ import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
-import com.mmall.util.RedisPoolUtil;
+import com.mmall.util.RedisShardedPoolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -41,7 +40,7 @@ public class UserManageController {
                 // 二期：在cookie中记录登录token（登录时的JSESSIONID）
                 CookieUtil.writeLoginToken(httpServletResponse, session.getId());
                 // 将登录信息保存到Redis中
-                RedisPoolUtil.setEx(session.getId(), // sessionID
+                RedisShardedPoolUtil.setEx(session.getId(), // sessionID
                         JsonUtil.obj2String(response.getData()), // 对User进行序列化
                         Const.RedisCacheExTime.REDIS_SESSION_EX_TIME); // 过期时间
                 return response;

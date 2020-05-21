@@ -6,7 +6,7 @@ import com.mmall.dao.UserMapper;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
 import com.mmall.util.MD5Util;
-import com.mmall.util.RedisPoolUtil;
+import com.mmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,7 +112,7 @@ public class UserServiceImpl implements IUserService {
             // TokenCache.setKey(TokenCache.TOKEN_PREFIX+username,forgetToken);
 
             // 改造后（远程数据服务Redis存储）
-            RedisPoolUtil.setEx(Const.TOKEN_PREFIX+username,forgetToken,60*60*12);
+            RedisShardedPoolUtil.setEx(Const.TOKEN_PREFIX+username,forgetToken,60*60*12);
             // 将token返回给前端
             return ServerResponse.createBySuccess(forgetToken);
         }
@@ -133,7 +133,7 @@ public class UserServiceImpl implements IUserService {
         // 改造前： 获取本地缓存中的该用户的token
         //String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX+username);
         // 改造后：从redis中读取forgetToken
-        String token = RedisPoolUtil.get(Const.TOKEN_PREFIX+username);
+        String token = RedisShardedPoolUtil.get(Const.TOKEN_PREFIX+username);
 
         // 如果token不存在，无效或过期
         if(StringUtils.isBlank(token)){

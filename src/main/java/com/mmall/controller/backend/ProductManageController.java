@@ -1,7 +1,6 @@
 package com.mmall.controller.backend;
 
 import com.google.common.collect.Maps;
-import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Product;
@@ -12,7 +11,7 @@ import com.mmall.service.IUserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
 import com.mmall.util.PropertiesUtil;
-import com.mmall.util.RedisPoolUtil;
+import com.mmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
@@ -49,7 +47,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(userLoginToken)) {
             ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
         }
-        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        String userJsonStr = RedisShardedPoolUtil.get(userLoginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
@@ -76,7 +74,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(userLoginToken)) {
             ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
         }
-        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        String userJsonStr = RedisShardedPoolUtil.get(userLoginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
@@ -103,7 +101,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(userLoginToken)) {
             ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
         }
-        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        String userJsonStr = RedisShardedPoolUtil.get(userLoginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
@@ -137,7 +135,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(userLoginToken)) {
             ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
         }
-        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        String userJsonStr = RedisShardedPoolUtil.get(userLoginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
@@ -173,7 +171,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(userLoginToken)) {
             ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
         }
-        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        String userJsonStr = RedisShardedPoolUtil.get(userLoginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
@@ -205,7 +203,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(userLoginToken)) {
             ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
         }
-        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        String userJsonStr = RedisShardedPoolUtil.get(userLoginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return ServerResponse.createByErrorMessage(
@@ -247,7 +245,7 @@ public class ProductManageController {
             resMap.put("msg", "请登录管理员");
             return resMap;
         }
-        String userJsonStr = RedisPoolUtil.get(userLoginToken);
+        String userJsonStr = RedisShardedPoolUtil.get(userLoginToken);
         User user = JsonUtil.string2Obj(userJsonStr, User.class);
         if (user == null) {
             resMap.put("success", false);

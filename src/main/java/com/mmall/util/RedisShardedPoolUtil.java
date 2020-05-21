@@ -1,102 +1,100 @@
 package com.mmall.util;
 
-import com.mmall.common.RedisPool;
 import com.mmall.common.RedisShardedPool;
 import lombok.extern.slf4j.Slf4j;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ShardedJedis;
 
 /**
- * Redis连接池工具类
+ * 分片式Redis连接池工具类
+ *
  * @author Still
  * @version 1.0
  * @date 2020/5/21 11:16
  */
 @Slf4j
-public class RedisPoolUtil {
-
+public class RedisShardedPoolUtil {
     // 添加key-value
     public static String set(String key, String value) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
 
         try {
-            jedis = RedisPool.getResource();
+            jedis = RedisShardedPool.getResource();
             result = jedis.set(key, value);
         } catch (Exception e) {
             log.error("set key:{} value:{} error", key, value, e);
-            RedisPool.returnBrokenResource(jedis);
+            RedisShardedPool.returnBrokenResource(jedis);
             return result;
         }
 
-        RedisPool.returnResource(jedis);
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 
     // 根据key获取value值
     public static String get(String key) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
 
         try {
-            jedis = RedisPool.getResource();
+            jedis = RedisShardedPool.getResource();
             result = jedis.get(key);
         } catch (Exception e) {
             log.error("get key:{} error", key, e);
-            RedisPool.returnBrokenResource(jedis);
+            RedisShardedPool.returnBrokenResource(jedis);
             return result;
         }
 
-        RedisPool.returnResource(jedis);
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 
     // set添加过期时间（单位是秒）
     public static String setEx(String key, String value, int exTime) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
         try {
-            jedis = RedisPool.getResource();
+            jedis = RedisShardedPool.getResource();
             result = jedis.setex(key, exTime, value);
         } catch (Exception e) {
             log.error("setEx key:{} value:{} error", key, value, e);
-            RedisPool.returnBrokenResource(jedis);
+            RedisShardedPool.returnBrokenResource(jedis);
             return result;
         }
-        RedisPool.returnResource(jedis);
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 
     // 重新设置指定key的有效期
     public static Long expire(String key, int exTime) {
-        Jedis jedis = null;
+        ShardedJedis ShardedJedis = null;
         Long result = null;
         try {
-            jedis = RedisPool.getResource();
-            result = jedis.expire(key, exTime);
+            ShardedJedis = RedisShardedPool.getResource();
+            result = ShardedJedis.expire(key, exTime);
         } catch (Exception e) {
             log.error("expire key:{} error", key, e);
-            RedisPool.returnBrokenResource(jedis);
+            RedisShardedPool.returnBrokenResource(ShardedJedis);
             return result;
         }
-        RedisPool.returnResource(jedis);
+        RedisShardedPool.returnResource(ShardedJedis);
         return result;
     }
 
     // 根据key进行删除操作
     public static Long del(String key) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         Long result = null;
         try {
-            jedis = RedisPool.getResource();
+            jedis = RedisShardedPool.getResource();
             result = jedis.del(key);
         } catch (Exception e) {
             log.error("del key:{} error", key, e);
-            RedisPool.returnBrokenResource(jedis);
+            RedisShardedPool.returnBrokenResource(jedis);
             return result;
         }
 
-        RedisPool.returnResource(jedis);
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 }
