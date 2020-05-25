@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--redis实现session共享的配置类-->
+    <bean id="redisHttpSessionConfiguration"
+          class="org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration">
+        <!--redis有效期30分钟-->
+        <property name="maxInactiveIntervalInSeconds" value="1800"></property>
+    </bean>
+
+    <!-- Cookie存储session属性注入  -->
+    <bean id="defaultCookieSerializer"
+          class="org.springframework.session.web.http.DefaultCookieSerializer">
+        <!--修改存储到Cookie的名称-->
+        <!--<property name="cookieName" value="user_login_token"></property>-->
+        <!--将cookie种在一级域名下-->
+        <property name="domainName" value=".yaoerba.com"></property>
+        <!--将cookie种在更目录下-->
+        <property name="cookiePath" value="/"></property>
+        <!--防止脚本访问cookie造成安全问题-->
+        <property name="useHttpOnlyCookie" value="true"></property>
+        <!--cookie有效期（一年）-->
+        <property name="cookieMaxAge" value="31536000"></property>
+    </bean>
+
+    <!--  jedis连接池配置  -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <!--最大连接数-->
+        <property name="maxTotal" value="20"/>
+        <!--最大空闲数-->
+        <property name="maxIdle" value="10"/>
+    </bean>
+
+    <!--  jedis连接工厂  -->
+    <bean id="jedisConnectionFactory"
+          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <!--  host属性  -->
+        <property name="hostName" value="127.0.0.1"/>
+        <!--  port属性  -->
+        <property name="port" value="6379"/>
+        <!--  jedis连接池Config   -->
+        <property name="poolConfig" ref="jedisPoolConfig"/>
+    </bean>
+</beans>

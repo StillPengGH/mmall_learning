@@ -17,4 +17,6 @@
 
     <!--  spring关于数据源的配置（分离出去，便于管理）  -->
     <import resource="applicationContext-datasource.xml"/>
+    <!--  spring关于springSession的配置）  -->
+    <import resource="applicationContext-spring-session.xml"/>
 </beans>
