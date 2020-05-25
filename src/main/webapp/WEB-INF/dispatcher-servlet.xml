@@ -9,7 +9,10 @@
 	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <!--对controller注解的扫描-->
-    <context:component-scan base-package="com.mmall" annotation-config="true"/>
+    <context:component-scan base-package="com.mmall.controller" use-default-filters="false">
+        <!-- 只针对controller层进行扫描 -->
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
 
     <!--配置编码和相应格式及编码-->
     <mvc:annotation-driven>

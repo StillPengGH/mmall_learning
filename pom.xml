@@ -56,7 +56,6 @@
             <artifactId>spring-test</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
