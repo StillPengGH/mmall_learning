@@ -25,7 +25,7 @@ public class UserManageController {
     /**
      * 后台用户登录（管理员）
      */
-    @RequestMapping(value = "/login.do",method = RequestMethod.GET)
+    @RequestMapping(value = "/login.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> login(HttpServletResponse httpServletResponse,
                                       HttpSession session,
