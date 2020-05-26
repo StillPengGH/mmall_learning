@@ -17,7 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 public class CookieUtil {
     // 写在哪个域名下，这里.yaoerba.com是一级域名下
     // www.yaoerbacom.com|user.yaoerba.com|product.yaoerba.com都可以看到写的cookie
-    private final static String COOKIE_DOMAIN = ".yaoerba.com";
+    //private final static String COOKIE_DOMAIN = ".yaoerba.com";
+    // 本地domain
+    private final  static String COOKIE_DOMAIN = "localhost";
     // 服务端要“种”到客户端浏览器上的名字
     private final static String COOKIE_NAME = "yeb_login_token";
 

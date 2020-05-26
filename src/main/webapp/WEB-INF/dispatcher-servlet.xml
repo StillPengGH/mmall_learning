@@ -44,4 +44,22 @@
         <!--编码-->
         <property name="defaultEncoding" value="UTF-8" />
      </bean>
+
+    <!--  登录权限拦截器配置  -->
+    <mvc:interceptors>
+        <!--直接将bean写在interceptors下，是拦截所有.do请求-->
+        <!--<bean class=".....Interceptor"></bean>-->
+
+        <!--指定单个拦截器（用户登录权限）-->
+        <mvc:interceptor>
+            <!-- /manage/a.do  /manage/* -->
+            <!-- /manage/b.do  /manage/* -->
+            <!-- /manage/product/list.do  /manage/** -->
+            <!-- /manage/order/detail.do  /manage/** -->
+            <mvc:mapping path="/manage/**"/>
+            <!--排出哪个请求，即当接收到login.do的时候不走拦截器，直接进入controller-->
+            <!--<mvc:exclude-mapping path="/manage/user/login.do"/>-->
+            <bean class="com.mmall.controller.common.interceptor.AuthInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>
