@@ -88,7 +88,7 @@ public class CartController {
     /**
      * 删除购物车中商品（可多选）
      *
-     * @param session
+     * @param httpServletRequest
      * @param productIds 规定多个产品id用逗号分隔
      * @return
      */
