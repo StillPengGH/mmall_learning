@@ -18,11 +18,19 @@ public interface OrderMapper {
 
     int updateByPrimaryKey(Order record);
 
-    Order selectByOrderNoUserId(@Param("orderNo")  Long orderNo,
+    Order selectByOrderNoUserId(@Param("orderNo") Long orderNo,
                                 @Param("userId") Integer userId);
+
     Order selectByOrderNo(Long orderNo);
 
     List<Order> selectOrderListByUserId(Integer userId);
 
     List<Order> selectOrderList();
+
+    // 定时关单：查询未支付状态、创建时间小于指定时间的订单列表
+    List<Order> selectOrderStatusByCreateTime(@Param("status") Integer status,
+                                              @Param("date") String date);
+
+    // 定时关单：根据orderId将订单设置为关闭状态
+    int closeOrderByOrderId(Integer id);
 }

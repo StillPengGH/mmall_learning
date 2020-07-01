@@ -62,7 +62,7 @@ public class CartController {
     /**
      * 更新购物车（更新购物车中指定产品的数量）
      *
-     * @param session
+     * @param httpServletRequest
      * @param productId
      * @param count
      * @return

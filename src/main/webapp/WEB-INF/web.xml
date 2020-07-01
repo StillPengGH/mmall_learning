@@ -73,9 +73,16 @@
         <!--</init-param>-->
         <load-on-startup>1</load-on-startup>
     </servlet>
+
+    <!--拦截.do请求
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.do</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
 
+    <!--支持RESTful风格的请求且支持.do-->
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 </web-app>

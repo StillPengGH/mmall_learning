@@ -27,4 +27,7 @@ public interface ProductMapper {
 
     List<Product> selectByNameAndCategoryIds(@Param(value = "keyword") String keyword,
                                              @Param(value = "categoryIdList") List<Integer> categoryIdList);
+
+    // 根据产品Id获取产品库存，为了订单中的产品被删除，库存为null所以用Integer，int无法为null
+    Integer selectStockById(Integer id);
 }
