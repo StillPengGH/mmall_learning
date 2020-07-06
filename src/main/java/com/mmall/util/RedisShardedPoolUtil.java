@@ -97,4 +97,22 @@ public class RedisShardedPoolUtil {
         RedisShardedPool.returnResource(jedis);
         return result;
     }
+
+    // 添加key-value（如果key不存在才设置【not exist】）
+    public static Long setNx(String key, String value) {
+        ShardedJedis jedis = null;
+        Long result = null;
+
+        try {
+            jedis = RedisShardedPool.getResource();
+            result = jedis.setnx(key, value);
+        } catch (Exception e) {
+            log.error("setNx key:{} value:{} error", key, value, e);
+            RedisShardedPool.returnBrokenResource(jedis);
+            return result;
+        }
+
+        RedisShardedPool.returnResource(jedis);
+        return result;
+    }
 }
