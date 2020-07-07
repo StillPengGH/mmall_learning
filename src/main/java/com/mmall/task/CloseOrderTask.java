@@ -56,7 +56,7 @@ public class CloseOrderTask {
      * 目的：一个时间点只有一台tomcat执行关闭订单任务
      * V2版本：当使用kill关闭tomcat，会造成死锁的可能。
      */
-    @Scheduled(cron = "0 */1 * * * ?")
+    // @Scheduled(cron = "0 */1 * * * ?")
     public void closeOrderTaskV2() {
         log.info("关闭订单定时任务启动");
         // 分布式锁的超时时间（即多久这个锁失效）
@@ -81,6 +81,7 @@ public class CloseOrderTask {
     /**
      * V3版本：解决V2中存在的死锁问题
      */
+    @Scheduled(cron = "0 */1 * * * ?")
     public void closeOrderTaskV3() {
         log.info("=====关闭订单任务启动=====");
         Long lockTimeOut = Long.parseLong(PropertiesUtil.getProperty(
