@@ -115,4 +115,22 @@ public class RedisShardedPoolUtil {
         RedisShardedPool.returnResource(jedis);
         return result;
     }
+
+    // set新值同时获取旧值（具有原子性，即命令不可以打断（化学中原子不可再分））
+    public static String getSet(String key, String value) {
+        ShardedJedis jedis = null;
+        String result = null;
+
+        try {
+            jedis = RedisShardedPool.getResource();
+            result = jedis.getSet(key, value);
+        } catch (Exception e) {
+            log.error("getSet key:{} value:{} error", key, value, e);
+            RedisShardedPool.returnBrokenResource(jedis);
+            return result;
+        }
+
+        RedisShardedPool.returnResource(jedis);
+        return result;
+    }
 }
