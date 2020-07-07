@@ -126,8 +126,8 @@ public class CloseOrderTask {
      * @param lockName 在redis中的分布式锁key
      */
     private void closeOrder(String lockName) {
-        // 为key设置过期时间（50秒），防止死锁
-        RedisShardedPoolUtil.expire(lockName, 50);
+        // 为key设置过期时间（5秒），防止死锁
+        RedisShardedPoolUtil.expire(lockName, 5);
         log.info("获取{}，当前线程名称：{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
                 Thread.currentThread().getName());
         // 关闭订单
