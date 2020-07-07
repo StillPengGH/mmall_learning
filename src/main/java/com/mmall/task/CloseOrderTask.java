@@ -106,15 +106,15 @@ public class CloseOrderTask {
                 // 如果锁的旧值getLockVal为null，即其他进程（tomcat）对这个锁进行了del操作
                 // 如果锁的旧值不为空且上面获取的lockVal相同，代表期间没有其他进程对锁进行过操作。
                 // 那么我们就可以放心的进行关闭订单的操作
-                if (getLockVal == null || (getLockVal != null && StringUtils.equals(getLockVal, lockVal))) {
+                if (getLockVal == null || (getLockVal != null && StringUtils.equals(lockVal, getLockVal))) {
                     // 关闭订单
                     closeOrder(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
                 } else {
                     // 如果getLockVal和lockVal不相等，证明其他的进行对锁进行了操作，结束当前动作
-                    log.info("没有获取分布式锁：{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
+                    log.info("没有获取到分布式锁：{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
                 }
             } else {
-                log.info("没有获取分布式锁：{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
+                log.info("没有获取到分布式锁：{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
             }
         }
         log.info("=====关闭订单任务结束=====");
