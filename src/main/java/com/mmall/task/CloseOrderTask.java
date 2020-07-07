@@ -99,6 +99,8 @@ public class CloseOrderTask {
             String lockVal = RedisShardedPoolUtil.get(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
             // 如果当前时间大于lockVal，证明这个锁已经失效
             // 那么我们就可以重新设置锁，然后进行关闭订单操作
+            log.info("系统当前时间：{}",System.currentTimeMillis());
+            log.info("lock过期时间：{}",Long.parseLong(lockVal));
             if (lockVal != null && System.currentTimeMillis() > Long.parseLong(lockVal)) {
                 // 设置新锁的同时，将锁的旧值返回
                 String getLockVal = RedisShardedPoolUtil.getSet(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
