@@ -1,17 +1,19 @@
 package com.mmall.task;
 
-import ch.qos.logback.classic.gaffer.PropertyUtil;
 import com.mmall.common.Const;
+import com.mmall.common.RedissonManager;
 import com.mmall.service.IOrderService;
 import com.mmall.util.PropertiesUtil;
 import com.mmall.util.RedisShardedPoolUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 定时关闭订单任务
@@ -27,6 +29,9 @@ import javax.annotation.PreDestroy;
 public class CloseOrderTask {
     @Autowired
     private IOrderService iOrderService;
+
+    @Autowired
+    private RedissonManager redissonManager;
 
     /**
      * tomcat容器关闭前执行的方法（执行shutdown才能执行，直接kill不会执行）
@@ -81,7 +86,7 @@ public class CloseOrderTask {
     /**
      * V3版本：解决V2中存在的死锁问题
      */
-    @Scheduled(cron = "0 */1 * * * ?")
+    // @Scheduled(cron = "0 */1 * * * ?")
     public void closeOrderTaskV3() {
         log.info("=====关闭订单任务启动=====");
         Long lockTimeOut = Long.parseLong(PropertiesUtil.getProperty(
@@ -90,6 +95,7 @@ public class CloseOrderTask {
         Long setNxResult = RedisShardedPoolUtil.setNx(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
                 String.valueOf(System.currentTimeMillis() + lockTimeOut));
         // 返回結果如果是1则证明：1.redis中不存在CLOSE_ORDER_TASK_LOCK这个key 2.set成功
+        log.info("当前获取的setNxResult:{}", setNxResult);
         if (setNxResult != null && setNxResult.intValue() == 1) {
             // 关闭指定时间未支付的订单
             closeOrder(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
@@ -99,8 +105,6 @@ public class CloseOrderTask {
             String lockVal = RedisShardedPoolUtil.get(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
             // 如果当前时间大于lockVal，证明这个锁已经失效
             // 那么我们就可以重新设置锁，然后进行关闭订单操作
-            log.info("系统当前时间：{}",System.currentTimeMillis());
-            log.info("lock过期时间：{}",Long.parseLong(lockVal));
             if (lockVal != null && System.currentTimeMillis() > Long.parseLong(lockVal)) {
                 // 设置新锁的同时，将锁的旧值返回
                 String getLockVal = RedisShardedPoolUtil.getSet(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
@@ -122,6 +126,43 @@ public class CloseOrderTask {
         log.info("=====关闭订单任务结束=====");
     }
 
+    @Scheduled(cron = "0 */1 * * * ?")
+    public void closeOrderTaskV4() {
+        // 创建锁
+        RLock lock = redissonManager
+                .getRedisson()
+                .getLock(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
+        boolean getLock = false;
+        try {
+            // 获取锁：waitTime尝试获取锁的时候等待时间，leaseTime锁的被动释放时间，单位：秒
+            getLock = lock.tryLock(2, 5, TimeUnit.SECONDS);
+            // 如果获取到锁，即getLock为true，关闭未支付订单
+            if (getLock) {
+                log.info("Redisson获取到分布式锁：{},线程名称：{}",
+                        Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
+                        Thread.currentThread().getName());
+                int hour = Integer.parseInt(PropertiesUtil.getProperty(
+                        "close.order.task.time.hour",
+                        "2")); // 默认2小时
+                // iOrderService.closeOrder(hour);
+            }else{
+                log.info("Redisson没有获取到分布式锁：{},线程名称：{}",
+                        Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
+                        Thread.currentThread().getName());
+            }
+        } catch (InterruptedException e) {
+            log.error("Redisson获取分布式锁异常",e);
+        } finally {
+            if(!getLock){
+                return;
+            }
+            // 释放锁
+            lock.unlock();
+            log.info("Redisson分布式锁释放");
+        }
+
+    }
+
     /**
      * 关闭订单
      *
@@ -129,7 +170,7 @@ public class CloseOrderTask {
      */
     private void closeOrder(String lockName) {
         // 为key设置过期时间（5秒），防止死锁
-        RedisShardedPoolUtil.expire(lockName, 5);
+        RedisShardedPoolUtil.expire(lockName, 50);
         log.info("获取{}，当前线程名称：{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
                 Thread.currentThread().getName());
         // 关闭订单
