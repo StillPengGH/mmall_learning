@@ -59,6 +59,7 @@
     <logger name="com.mmall" additivity="false" level="INFO">
         <appender-ref ref="mmall"></appender-ref>
         <appender-ref ref="console"></appender-ref>
+        <appender-ref ref="error"></appender-ref>
     </logger>
 
     <!--将dao下的设置为DEBUG级别，这样可以在日志中看到想看的sql语句-->

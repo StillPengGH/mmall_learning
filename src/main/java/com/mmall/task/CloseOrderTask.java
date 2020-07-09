@@ -86,7 +86,7 @@ public class CloseOrderTask {
     /**
      * V3版本：解决V2中存在的死锁问题
      */
-    // @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */1 * * * ?")
     public void closeOrderTaskV3() {
         log.info("=====关闭订单任务启动=====");
         Long lockTimeOut = Long.parseLong(PropertiesUtil.getProperty(
@@ -129,7 +129,7 @@ public class CloseOrderTask {
     /**
      * springSchedule+Redisson框架分布式锁实现任务调度
      */
-    @Scheduled(cron = "0 */1 * * * ?")
+    // @Scheduled(cron = "0 */1 * * * ?")
     public void closeOrderTaskV4() {
         // 创建锁
         RLock lock = redissonManager

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!--添加LOG_HOME-->
+    <property name="LOG_HOME" value="${CATALINA_HOME}/logs"></property>
     <!--大于DEBUG级别的进行日志输出到tomcat下logs里的catalina.log-->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoding>UTF-8</encoding>
@@ -14,13 +16,10 @@
 
     <!--项目日志-->
     <appender name="mmall" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--本地路径-->
-        <File>C:/apache-tomcat-7.0.75/logs/mmall.log</File>
         <!--linux服务器路径-->
-        <!--<File>/usr/local/apache-tomcat-7.0.73/logs/mmall.log</File>-->
+        <File>${LOG_HOME}/mmall.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>C:\apache-tomcat-7.0.75\logs/mmall.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
-            <!--<fileNamePattern>/usr/local/apache-tomcat-7.0.73/logs/mmall.log.%d{yyyy-MM-dd}.gz</fileNamePattern>-->
+            <fileNamePattern>${LOG_HOME}/mmall.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
             <append>true</append>
             <!--日志存储最大时间10天-->
             <maxHistory>10</maxHistory>
@@ -33,13 +32,10 @@
 
     <!--error级别的日志输出-->
     <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--本地路径-->
-        <File>C:/apache-tomcat-7.0.75/logs/error.log</File>
         <!--linux服务器路径-->
-        <!--<File>/usr/local/apache-tomcat-7.0.73/logs/error.log</File>-->
+        <File>${LOG_HOME}/error.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>C:\apache-tomcat-7.0.75\logs/error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
-            <!--<fileNamePattern>/usr/local/apache-tomcat-7.0.73/logs/error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>-->
+            <fileNamePattern>${LOG_HOME}/error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
             <append>true</append>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
@@ -59,6 +55,7 @@
     <logger name="com.mmall" additivity="false" level="INFO">
         <appender-ref ref="mmall"></appender-ref>
         <appender-ref ref="console"></appender-ref>
+        <appender-ref ref="error"></appender-ref>
     </logger>
 
     <!--将dao下的设置为DEBUG级别，这样可以在日志中看到想看的sql语句-->
