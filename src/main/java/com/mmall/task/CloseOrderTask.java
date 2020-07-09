@@ -180,7 +180,7 @@ public class CloseOrderTask {
         int hour = Integer.parseInt(PropertiesUtil.getProperty(
                 "close.order.task.time.hour",
                 "2")); // 默认2小时
-        // iOrderService.closeOrder(hour);
+        iOrderService.closeOrder(hour);
         // 释放锁（key）
         RedisShardedPoolUtil.del(lockName);
         log.info("释放{}，当前线程名称：{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
