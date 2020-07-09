@@ -147,7 +147,7 @@ public class CloseOrderTask {
                 int hour = Integer.parseInt(PropertiesUtil.getProperty(
                         "close.order.task.time.hour",
                         "2")); // 默认2小时
-                // iOrderService.closeOrder(hour);
+                iOrderService.closeOrder(hour);
             }else{
                 log.info("Redisson没有获取到分布式锁：{},线程名称：{}",
                         Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
