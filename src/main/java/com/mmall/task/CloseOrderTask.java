@@ -86,7 +86,7 @@ public class CloseOrderTask {
     /**
      * V3版本：解决V2中存在的死锁问题
      */
-    // @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */1 * * * ?")
     public void closeOrderTaskV3() {
         log.info("=====关闭订单任务启动=====");
         Long lockTimeOut = Long.parseLong(PropertiesUtil.getProperty(
@@ -129,7 +129,7 @@ public class CloseOrderTask {
     /**
      * springSchedule+Redisson框架分布式锁实现任务调度
      */
-    @Scheduled(cron = "0 */1 * * * ?")
+    // @Scheduled(cron = "0 */1 * * * ?")
     public void closeOrderTaskV4() {
         // 创建锁
         RLock lock = redissonManager
@@ -147,10 +147,6 @@ public class CloseOrderTask {
                 int hour = Integer.parseInt(PropertiesUtil.getProperty(
                         "close.order.task.time.hour",
                         "2")); // 默认2小时
-                int j = 0;
-                for(int i=0;i<100;i++){
-                    j = j+i;
-                }
                 iOrderService.closeOrder(hour);
             }else{
                 log.info("Redisson没有获取到分布式锁：{},线程名称：{}",
@@ -184,6 +180,10 @@ public class CloseOrderTask {
         int hour = Integer.parseInt(PropertiesUtil.getProperty(
                 "close.order.task.time.hour",
                 "2")); // 默认2小时
+        int j = 0;
+        for(int i=0;i<200;i++){
+            j = j+i;
+        }
         iOrderService.closeOrder(hour);
         // 释放锁（key）
         RedisShardedPoolUtil.del(lockName);
