@@ -126,6 +126,9 @@ public class CloseOrderTask {
         log.info("=====关闭订单任务结束=====");
     }
 
+    /**
+     * springSchedule+Redisson框架分布式锁实现任务调度
+     */
     @Scheduled(cron = "0 */1 * * * ?")
     public void closeOrderTaskV4() {
         // 创建锁
@@ -135,7 +138,7 @@ public class CloseOrderTask {
         boolean getLock = false;
         try {
             // 获取锁：waitTime尝试获取锁的时候等待时间，leaseTime锁的被动释放时间，单位：秒
-            getLock = lock.tryLock(2, 5, TimeUnit.SECONDS);
+            getLock = lock.tryLock(0, 5, TimeUnit.SECONDS);
             // 如果获取到锁，即getLock为true，关闭未支付订单
             if (getLock) {
                 log.info("Redisson获取到分布式锁：{},线程名称：{}",
